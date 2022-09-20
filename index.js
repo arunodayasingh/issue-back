@@ -1,12 +1,34 @@
 const express = require("express");
-require("./database/config");
+// const cors= require("cors");
+// require("./database/config");
 
-const User = require('./db/config'); 
-
+const User = require('./database/Users'); 
 const app = express();
 
-app.post("/login",(req,res)=>{
-    res.send("api in progress")
+
+
+app.use(express.json());
+// app.use(cors());
+
+
+app.post("/register",async (req,res)=>{
+
+      
+    let user = new User(req.body);
+    let result = await user.save();
+    result = result.toObject();
+    delete result.password;
+    res.send(result);
 })
 
-app.listen(9000);
+app.post("/login",async(req,res)=>{
+    
+    let user = await User.findOne(req.body);
+    res.send(user);
+    // res.send(req.body);
+})
+
+app.listen(5000);
+
+
+module.exports = app;
